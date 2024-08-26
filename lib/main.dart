@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:piscine_mobile/mobileModule00/ex00.dart';
-import 'package:piscine_mobile/mobileModule00/ex01.dart';
-import 'package:piscine_mobile/mobileModule00/ex02.dart';
+import 'package:piscine_mobile/mobileModule00/calculator_proj.dart';
+
 
 void main() {
   runApp(const MyApp());
@@ -18,7 +17,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         
       ),
-      home: const MyCalculator(),
+      home: const CalculatorProj(),
     );
   }
 }
