@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:piscine_mobile/mobileModule00/calculator_proj.dart';
+import 'package:piscine_mobile/mobileWeatherApp/weather_proj.dart';
+
 
 
 void main() {
@@ -17,7 +18,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         
       ),
-      home: const CalculatorProj(),
+      home: const WeatherProj(),
     );
   }
 }
