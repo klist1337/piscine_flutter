@@ -81,7 +81,7 @@ class _WeatherProjState extends State<WeatherProj> {
               }, 
               icon: const Icon(Icons.sunny_snowing)
               ),
-            label: "Current" 
+            label: "Currently" 
           ),
           BottomNavigationBarItem(
             icon: IconButton(
@@ -115,7 +115,7 @@ class _WeatherProjState extends State<WeatherProj> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Text('Current',style: TextStyle(
+          const Text('Currently',style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold
           ),),
@@ -151,7 +151,7 @@ class _WeatherProjState extends State<WeatherProj> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Text('Current',style: TextStyle(
+          const Text('Weekly',style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold
           ),),
