@@ -12,6 +12,13 @@ class _WeatherProjState extends State<WeatherProj> {
   final TextEditingController controller = TextEditingController();
   int currentIndex = 0;
   String location = "";
+
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
    
  
   @override
@@ -35,6 +42,11 @@ class _WeatherProjState extends State<WeatherProj> {
                   child: SizedBox(
                     width: isPortrait ? 200 : 500,
                     child: TextFormField(
+                    onChanged: (value) {
+                      setState(() {
+                        location = value;
+                      });
+                    },
                     controller: controller ,
                     decoration:  InputDecoration(
                       hintText: "Search your location",
@@ -57,11 +69,7 @@ class _WeatherProjState extends State<WeatherProj> {
                   ))
                 ),
              const SizedBox(width: 8.0,),
-              IconButton(onPressed: () {
-                setState(() {
-                  location = controller.text;
-                });
-              }, 
+              IconButton(onPressed: () {}, 
                 icon: const Icon(CupertinoIcons.location_fill, color: Colors.white,))
               ]  
               ),
