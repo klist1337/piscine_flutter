@@ -6,10 +6,10 @@ plugins {
 }
 
 android {
+    compileSdkVersion 34
     namespace = "com.example.piscine_mobile"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
-
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8

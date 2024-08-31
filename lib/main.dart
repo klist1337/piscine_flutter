@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:piscine_mobile/mobileWeatherApp/weather_proj.dart';
+import 'package:piscine_mobile/Modulel02/weather_app_v2_proj.dart';
 
 
 
@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         
       ),
-      home: const WeatherProj(),
+      home: const WeatherAppV2Proj(),
     );
   }
 }
