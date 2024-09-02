@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart'; 
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:piscine_mobile/Modulel02/data_service.dart';
 
 class Searcher extends StatefulWidget {
   const Searcher({super.key});
@@ -15,7 +16,16 @@ class _SearcherState extends State<Searcher> {
   String location = "";
   Position? position;
   bool isDenied = false;
+  String searchCity = "";
+  List<String> list = ["Paris, ile de france, France",
+  "Ullamco do ex id amet anim",
+  "Officia cupidatat laboris excepteur"];
 
+
+  @override
+  void initState() {
+    super.initState();
+  }
   @override
   void dispose() {
     controller.dispose();
@@ -29,7 +39,7 @@ class _SearcherState extends State<Searcher> {
     bool isPortrait = MediaQuery.of(context).orientation == Orientation.portrait;
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: Size(MediaQuery.of(context).size.width, 60),
+        preferredSize: Size(MediaQuery.of(context).size.width, 80),
         child: AppBar(
           backgroundColor: const Color(0xFF5B5D72),
           flexibleSpace: Column(
@@ -48,6 +58,7 @@ class _SearcherState extends State<Searcher> {
                       setState(() {
                         isDenied = false;
                         location = value;
+                        searchCity = value;
                       });
                     },
                     controller: controller ,
@@ -81,7 +92,9 @@ class _SearcherState extends State<Searcher> {
             ],
           ),),
       ),
-      body: pages[currentIndex] ,
+      body: searchCity.isEmpty ? 
+        pages[currentIndex] 
+        : searcherList() ,
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: currentIndex,
         items: [
@@ -265,5 +278,58 @@ class _SearcherState extends State<Searcher> {
       location = "${position?.latitude} ${position?.longitude}";
       isDenied = false;
     });
+  }
+
+  Widget searcherList() {
+    return FutureBuilder(
+      future: DataService().getCities(searchCity),
+      builder: (context, AsyncSnapshot snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+        }
+        else if (snapshot.hasError || snapshot.data == null) {
+            return const Center(child: Text('this city does not exist'));
+        }
+        return ListView.separated(
+          itemCount: snapshot.data.length,
+          itemBuilder: (context, index) {
+            List<dynamic> cities = snapshot.data;
+              return Container(
+                height: 80,
+                width: MediaQuery.of(context).size.width,
+                decoration: const BoxDecoration(
+                  color: Color.fromARGB(137, 255, 255, 255)
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  child: Row(
+                    children: [
+                      Text(cities[index]['name'], style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16
+                      ),),
+                      const SizedBox(width: 8,),
+                      Text("${cities[index]['admin1']}, ", 
+                        style: TextStyle(
+                          color: Colors.grey.shade800,
+                          fontSize: 16
+                        ) ,),
+                     cities[index]['country'] != null ?
+                      Text(cities[index]['country'], 
+                        style: TextStyle(
+                          color: Colors.grey.shade800,
+                          fontSize: 16
+                        ) ,) : const SizedBox.shrink()
+                    ],
+                  ),
+                )
+              );
+            },
+          separatorBuilder: (context, index) => const Divider(
+            height: 2,
+          ),
+        );
+      }
+    );
   }
 }

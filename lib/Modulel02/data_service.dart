@@ -1,4 +1,3 @@
-import 'package:piscine_mobile/Modulel02/cities_model.dart';
 import 'package:piscine_mobile/Modulel02/http_services.dart';
 
 class DataService {
@@ -9,14 +8,16 @@ class DataService {
   }
   DataService._internal();
 
-  Future<List<Cities>?> getCities(String city) async {
+  Future<List<dynamic>?> getCities(String city) async {
     String path = "/search?name=$city&count=10&language=en&format=json";
     
     var response = await _httpServices.get(path);
     if (response?.statusCode == 200 && response?.data != null) {
-      List data = response!.data;
-      List<Cities> cities = data.map((city) => Cities.fromJson(city)).toList();
-      return cities;  
+      //print(response!.data["results"]);
+      List<dynamic> data = response!.data['results'];
+      //print(data);
+
+      return data;  
     }
     return null;
   }
