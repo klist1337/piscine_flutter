@@ -287,8 +287,39 @@ class _SearcherState extends State<Searcher> {
         if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
         }
-        else if (snapshot.hasError || snapshot.data == null) {
-            return const Center(child: Text('this city does not exist'));
+        else if (snapshot.hasError) {
+            return const Center(child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text("Could not find any result for the supplied",
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.red
+                  ),),
+                Text("address or coordinates",
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.red
+                  ),),
+              ],
+            ));
+        }
+        else if (!snapshot.hasData || snapshot.data.isEmpty) {
+          return const Center(child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text("the service connection is lost, please check", 
+                style: TextStyle(
+                  color: Colors.red,
+                  fontSize: 16
+              ),),
+              Text("your internet connection or try again", 
+                style: TextStyle(
+                  color: Colors.red,
+                  fontSize: 16
+              ),),
+            ],
+          ));
         }
         return ListView.separated(
           itemCount: snapshot.data.length,

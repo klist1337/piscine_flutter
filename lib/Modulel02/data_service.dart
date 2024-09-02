@@ -13,10 +13,7 @@ class DataService {
     
     var response = await _httpServices.get(path);
     if (response?.statusCode == 200 && response?.data != null) {
-      //print(response!.data["results"]);
       List<dynamic> data = response!.data['results'];
-      //print(data);
-
       return data;  
     }
     return null;
