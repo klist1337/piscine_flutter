@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:piscine_mobile/Modulel02/data_service.dart';
-
+import 'package:piscine_mobile/Modulel02/function.dart';
+// ignore: must_be_immutable
 class FillTheView extends StatefulWidget {
-  const FillTheView({super.key});
+   FillTheView({super.key, this.city});
+  dynamic city;
 
   @override
   State<FillTheView> createState() => _FillTheViewState();
@@ -21,9 +23,11 @@ class _FillTheViewState extends State<FillTheView> {
   String searchCity = "";
 
 
+
   @override
   void initState() {
     super.initState();
+    _determinePosition();
   }
   @override
   void dispose() {
@@ -36,6 +40,11 @@ class _FillTheViewState extends State<FillTheView> {
   Widget build(BuildContext context) {
   List<Widget> pages = [currentMeteoPage(), todayMeteoPage(), weeklyMeteoPage() ];
     bool isPortrait = MediaQuery.of(context).orientation == Orientation.portrait;
+    if (widget.city != null) {
+      locations[0] = widget.city['name'];
+      locations[1] = widget.city['admin1'];
+      locations[2] = widget.city['country'];
+    }
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: Size(MediaQuery.of(context).size.width, 80),
@@ -84,6 +93,7 @@ class _FillTheViewState extends State<FillTheView> {
              const SizedBox(width: 8.0,),
               IconButton(onPressed: () async {
                 await _determinePosition();
+                widget.city = null;
               }, 
                 icon: const Icon(CupertinoIcons.location_fill, color: Colors.white,))
               ]  
@@ -136,28 +146,105 @@ class _FillTheViewState extends State<FillTheView> {
     );
   }
   Widget currentMeteoPage() {
-    return  Center(
-      child:  isDenied == false ?  Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          const SizedBox(height: 20,),
-          Text(locations[0], 
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold
-          ),),
-          Text(locations[1], 
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold
-          ),),
-          Text(locations[2], 
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold
-          ),),
-        ],
-      ) : const Padding(
+    if (isDenied == false) {
+      if (position != null) {
+        print(position);
+         return FutureBuilder(
+          future: widget.city == null ? DataService().getCurrentWeather(position!.latitude, position!.longitude) :
+          DataService().getCurrentWeather(widget.city['latitude'], widget.city['longitude'],),
+          builder: (context, AsyncSnapshot snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator(color:  Color(0xFF5B5D72)));
+            }
+
+            else if (snapshot.hasError) {
+              return const Center(child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text("Could not find any result for the supplied",
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.red
+                  ),),
+                Text("address or coordinates",
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.red
+                  ),),
+              ],
+            ));
+            }
+            else if (!snapshot.hasData) {
+              return const Center(child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text("the service connection is lost, please check", 
+                  style: TextStyle(
+                    color: Colors.red,
+                    fontSize: 16
+                ),),
+                Text("your internet connection or try again", 
+                  style: TextStyle(
+                    color: Colors.red,
+                    fontSize: 16
+                ),),
+              ],
+            ));
+            }
+            else {
+              final currentWeather = snapshot.data;
+              String? weatherCondition = getWeatherCondition(currentWeather['current']['weather_code']);
+              double temperature = currentWeather['current']['apparent_temperature']; 
+              double windSpeed = currentWeather['current']['wind_speed_10m'];
+              return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 20,),
+                  Text(locations[0], 
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold
+                  ),),
+                  Text(locations[1], 
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold
+                  ),),
+                  Text(locations[2], 
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold
+                  ),),
+                  Text("$temperature °C",
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold
+                  ),),
+                  Text(weatherCondition!,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold
+                  ),),
+                  Text("$windSpeed km/h",
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold
+                  ),),
+                ],
+              ),
+            );
+            }
+            
+          }
+        );
+      }
+       else {
+        return const Center(child:CircularProgressIndicator(color: Color(0xFF5B5D72),));
+       }
+    }
+    return const Center(
+      child:   Padding(
         padding: EdgeInsets.symmetric(horizontal: 20.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -336,35 +423,44 @@ class _FillTheViewState extends State<FillTheView> {
           itemCount: snapshot.data.length,
           itemBuilder: (context, index) {
             List<dynamic> cities = snapshot.data;
-              return Container(
-                height: 80,
-                width: MediaQuery.of(context).size.width,
-                decoration: const BoxDecoration(
-                  color: Color.fromARGB(137, 255, 255, 255)
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
-                  child: Row(
-                    children: [
-                      Text(cities[index]['name'], style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16
-                      ),),
-                      const SizedBox(width: 8,),
-                      Text("${cities[index]['admin1']}, ", 
-                        style: TextStyle(
-                          color: Colors.grey.shade800,
-                          fontSize: 16
-                        ) ,),
-                     cities[index]['country'] != null ?
-                      Text(cities[index]['country'], 
-                        style: TextStyle(
-                          color: Colors.grey.shade800,
-                          fontSize: 16
-                        ) ,) : const SizedBox.shrink()
-                    ],
+              return GestureDetector(
+                onTap: () async {
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(builder: (context) => FillTheView(city: cities[index],))
+                  );
+                  // if (!context.mounted) return;
+                  // Navigator.pop(context);
+                },
+                child: Container(
+                  height: 80,
+                  width: MediaQuery.of(context).size.width,
+                  decoration: const BoxDecoration(
+                    color: Color.fromARGB(137, 255, 255, 255)
                   ),
-                )
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    child: Row(
+                      children: [
+                        Text(cities[index]['name'], style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16
+                        ),),
+                        const SizedBox(width: 8,),
+                        Text("${cities[index]['admin1']}, ", 
+                          style: TextStyle(
+                            color: Colors.grey.shade800,
+                            fontSize: 16
+                          ) ,),
+                       cities[index]['country'] != null ?
+                        Text(cities[index]['country'], 
+                          style: TextStyle(
+                            color: Colors.grey.shade800,
+                            fontSize: 16
+                          ) ,) : const SizedBox.shrink()
+                      ],
+                    ),
+                  )
+                ),
               );
             },
           separatorBuilder: (context, index) => const Divider(

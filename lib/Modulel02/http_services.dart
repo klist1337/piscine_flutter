@@ -21,7 +21,6 @@ class HttpServices {
     }
     final option = BaseOptions(
       headers: headers,
-      baseUrl: API_BASE_URL,
       validateStatus: (status) {
         if (status == null) return false;
         return status < 500;

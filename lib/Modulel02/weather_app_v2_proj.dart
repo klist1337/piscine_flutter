@@ -12,6 +12,6 @@ class WeatherAppV2Proj extends StatefulWidget {
 class _WeatherAppV2ProjState extends State<WeatherAppV2Proj> {
   @override
   Widget build(BuildContext context) {
-    return const FillTheView();
+    return  FillTheView();
   }
 }
