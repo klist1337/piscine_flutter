@@ -6,8 +6,9 @@ import 'package:piscine_mobile/Modulel02/data_service.dart';
 import 'package:piscine_mobile/Modulel02/function.dart';
 // ignore: must_be_immutable
 class FillTheView extends StatefulWidget {
-   FillTheView({super.key, this.city});
+  FillTheView({super.key, this.city, this.startIndex});
   dynamic city;
+  int? startIndex;
 
   @override
   State<FillTheView> createState() => _FillTheViewState();
@@ -44,6 +45,9 @@ class _FillTheViewState extends State<FillTheView> {
       locations[0] = widget.city['name'];
       locations[1] = widget.city['admin1'];
       locations[2] = widget.city['country'];
+    }
+    if (widget.startIndex != null) {
+      currentIndex = widget.startIndex!; 
     }
     return Scaffold(
       appBar: PreferredSize(
@@ -112,6 +116,7 @@ class _FillTheViewState extends State<FillTheView> {
               onPressed: () {
                 setState(() {
                   currentIndex = 0;
+                  widget.startIndex = 0;
                 });
               }, 
               icon: const Icon(Icons.sunny_snowing)
@@ -123,6 +128,7 @@ class _FillTheViewState extends State<FillTheView> {
               onPressed: () {
                  setState(() {
                   currentIndex = 1;
+                  widget.startIndex = 1; 
                 });
               }, 
               icon: const Icon(Icons.today)
@@ -134,6 +140,7 @@ class _FillTheViewState extends State<FillTheView> {
               onPressed: () {
                 setState(() {
                   currentIndex = 2;
+                  widget.startIndex = 2;
                 });
               }, 
               icon: const Icon(Icons.calendar_month)
@@ -145,10 +152,10 @@ class _FillTheViewState extends State<FillTheView> {
       ),
     );
   }
+
   Widget currentMeteoPage() {
     if (isDenied == false) {
       if (position != null) {
-        print(position);
          return FutureBuilder(
           future: widget.city == null ? DataService().getCurrentWeather(position!.latitude, position!.longitude) :
           DataService().getCurrentWeather(widget.city['latitude'], widget.city['longitude'],),
@@ -264,22 +271,103 @@ class _FillTheViewState extends State<FillTheView> {
       ),
     );
   }
+
   Widget todayMeteoPage() {
-    return  Center(
-      child: isDenied == false ? Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Text('Today',style: TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold
-          ),),
-          Text(location, 
-          style: const TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold
-          ),),
-        ],
-      ) : const Padding(
+     if (isDenied == false) {
+      if (position != null) {
+         return FutureBuilder(
+          future: widget.city == null ? DataService().getTodayWeather(position!.latitude, position!.longitude) :
+          DataService().getTodayWeather(widget.city['latitude'], widget.city['longitude'],),
+          builder: (context, AsyncSnapshot snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator(color:  Color(0xFF5B5D72)));
+            }
+            else if (snapshot.hasError) {
+              return const Center(child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text("Could not find any result for the supplied",
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.red
+                  ),),
+                Text("address or coordinates",
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.red
+                  ),),
+              ],
+            ));
+            }
+            else if (!snapshot.hasData) {
+              return const Center(child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text("the service connection is lost, please check", 
+                  style: TextStyle(
+                    color: Colors.red,
+                    fontSize: 16
+                ),),
+                Text("your internet connection or try again", 
+                  style: TextStyle(
+                    color: Colors.red,
+                    fontSize: 16
+                ),),
+              ],
+            ));
+            }
+            else {
+              final todayWeatherTime = snapshot.data['hourly']['time'];
+              final todayWeatherTemp = snapshot.data['hourly']['temperature_2m'];
+              final todayWeatherCode = snapshot.data['hourly']['weather_code'];
+              final todayWindSpeed = snapshot.data['hourly']['wind_speed_10m'];
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 20,),
+                  Text(locations[0], 
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold
+                  ),),
+                  Text(locations[1], 
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold
+                  ),),
+                  Text(locations[2], 
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold
+                  ),),
+                  Expanded(
+                    child: ListView.builder(
+                    itemCount: todayWeatherTime.length,
+                    itemBuilder:(context, index) {
+                      return Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          Text(todayWeatherTime[index].split('T')[1]),
+                          //const SizedBox(width: 10,),
+                          Text("${todayWeatherTemp[index]} °C"),
+                          //const SizedBox(width: 20,),
+                          Text(getWeatherCondition(todayWeatherCode[index])!.split(':')[0]),
+                          Text("${todayWindSpeed[index]} km/h")
+                      ]);
+                    }))
+                ], 
+              );
+            }
+            
+          }
+        );
+      }
+       else {
+        return const Center(child:CircularProgressIndicator(color: Color(0xFF5B5D72),));
+       }
+    }
+    return const Center(
+      child:   Padding(
         padding: EdgeInsets.symmetric(horizontal: 20.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -298,24 +386,105 @@ class _FillTheViewState extends State<FillTheView> {
         ),
       ),
     );
+    
   }
 
   Widget weeklyMeteoPage() {
-    return  Center(
-      child: isDenied == false ? Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Text('Weekly',style: TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold
-          ),),
-          Text(location, 
-          style: const TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold
-          ),),
-        ],
-      ) : const Padding(
+     if (isDenied == false) {
+      if (position != null) {
+         return FutureBuilder(
+          future: widget.city == null ? DataService().getWeeklyWeather(position!.latitude, position!.longitude) :
+          DataService().getWeeklyWeather(widget.city['latitude'], widget.city['longitude'],),
+          builder: (context, AsyncSnapshot snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator(color:  Color(0xFF5B5D72)));
+            }
+            else if (snapshot.hasError) {
+              return const Center(child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text("Could not find any result for the supplied",
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.red
+                  ),),
+                Text("address or coordinates",
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.red
+                  ),),
+              ],
+            ));
+            }
+            else if (!snapshot.hasData) {
+              return const Center(child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text("the service connection is lost, please check", 
+                  style: TextStyle(
+                    color: Colors.red,
+                    fontSize: 16
+                ),),
+                Text("your internet connection or try again", 
+                  style: TextStyle(
+                    color: Colors.red,
+                    fontSize: 16
+                ),),
+              ],
+            ));
+            }
+            else {
+              final todayWeatherTime = snapshot.data['daily']['time'];
+              final todayTempMax = snapshot.data['daily']['temperature_2m_min'];
+              final todayTempMin = snapshot.data['daily']['temperature_2m_max'];
+              final todayWeatherCode = snapshot.data['daily']['weather_code'];
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 20,),
+                  Text(locations[0], 
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold
+                  ),),
+                  Text(locations[1], 
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold
+                  ),),
+                  Text(locations[2], 
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold
+                  ),),
+                  Expanded(
+                    child: ListView.builder(
+                    itemCount: todayWeatherTime.length,
+                    itemBuilder:(context, index) {
+                      return Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          Text(todayWeatherTime[index]),
+                          //const SizedBox(width: 10,),
+                          Text("${todayTempMin[index]} °C"),
+                          //const SizedBox(width: 20,),
+                          Text("${todayTempMax[index]} °C"),
+                          Text(getWeatherCondition(todayWeatherCode[index])!.split(':')[0]),
+                      ]);
+                    }))
+                ], 
+              );
+            }
+            
+          }
+        );
+      }
+       else {
+        return const Center(child:CircularProgressIndicator(color: Color(0xFF5B5D72),));
+       }
+    }
+    return const Center(
+      child:   Padding(
         padding: EdgeInsets.symmetric(horizontal: 20.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -334,6 +503,7 @@ class _FillTheViewState extends State<FillTheView> {
         ),
       ),
     );
+    
   }
 
    Future _determinePosition() async {
@@ -426,7 +596,7 @@ class _FillTheViewState extends State<FillTheView> {
               return GestureDetector(
                 onTap: () async {
                   Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (context) => FillTheView(city: cities[index],))
+                    MaterialPageRoute(builder: (context) => FillTheView(city: cities[index], startIndex: currentIndex,))
                   );
                   // if (!context.mounted) return;
                   // Navigator.pop(context);

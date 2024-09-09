@@ -26,10 +26,29 @@ class DataService {
     var response = await _httpServices.get(path);
     if (response?.statusCode == 200 && response?.data != null) {
       final data = response?.data;
-      print(data);
       return data;
     }
     return null;
   }
 
+  Future<dynamic> getTodayWeather(double latitude, double longitude) async {
+    String path = "$WEATHER_API_BASE_URL/forecast?latitude=$latitude&longitude=$longitude&hourly=temperature_2m,apparent_temperature,weather_code,wind_speed_10m&forecast_days=1";
+    var response = await _httpServices.get(path);
+    if (response?.statusCode == 200 && response?.data != null) {
+      final data = response?.data;
+      return data;
+    }
+    return null;
+  }
+  
+  Future<dynamic> getWeeklyWeather(double latitude, double longitude) async {
+    String path = "$WEATHER_API_BASE_URL/forecast?latitude=$latitude&longitude=$longitude&daily=weather_code,temperature_2m_max,temperature_2m_min";
+
+    var response = await _httpServices.get(path);
+    if (response?.statusCode == 200 && response?.data != null) {
+      final data = response?.data;
+      return data;
+    }
+    return null;
+  }
 }
