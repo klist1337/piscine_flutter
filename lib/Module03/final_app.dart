@@ -5,16 +5,16 @@ import 'package:geolocator/geolocator.dart';
 import 'package:piscine_mobile/Modulel02/data_service.dart';
 import 'package:piscine_mobile/Modulel02/function.dart';
 // ignore: must_be_immutable
-class FillTheView extends StatefulWidget {
-  FillTheView({super.key, this.city, this.startIndex});
+class FinalApp extends StatefulWidget {
+  FinalApp({super.key, this.city, this.startIndex});
   dynamic city;
   int? startIndex;
 
   @override
-  State<FillTheView> createState() => _FillTheViewState();
+  State<FinalApp> createState() => _FinalAppState();
 }
 
-class _FillTheViewState extends State<FillTheView> {
+class _FinalAppState extends State<FinalApp> {
   final TextEditingController controller = TextEditingController();
   int currentIndex = 0;
   List<String> locations = List.generate(3, (index) => "");
@@ -51,7 +51,7 @@ class _FillTheViewState extends State<FillTheView> {
     }
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: Size(MediaQuery.of(context).size.height, 70),
+        preferredSize: Size(MediaQuery.of(context).size.height, 60),
         child: AppBar(
           backgroundColor: const Color(0xFF5B5D72),
           flexibleSpace: SingleChildScrollView(
@@ -77,18 +77,15 @@ class _FillTheViewState extends State<FillTheView> {
                       controller: controller ,
                       decoration:  InputDecoration(
                         enabledBorder: const OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Colors.transparent
-                          ),
+                          borderSide: BorderSide(color: Colors.transparent),
                         ),
-                        focusedBorder: const OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Colors.transparent
-                          ),
-                        ),
-                        hintText: "Search your location",
-                        hintStyle: TextStyle(
+                        focusedBorder:const OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.transparent),
+                        ) ,
+                        labelText: "Search your location",
+                        labelStyle: TextStyle(
                           fontStyle:FontStyle.italic,
+                          fontSize: isPortrait ? 15 : 18,
                           color: Colors.grey.shade500
                         ),
                         prefixIcon:  const Icon(Icons.search, color: Colors.white,),
@@ -96,7 +93,8 @@ class _FillTheViewState extends State<FillTheView> {
                                 ),
                     ),
                   ),
-                SizedBox(width: MediaQuery.of(context).size.width * 0.28),
+                SizedBox(width: isPortrait ? MediaQuery.of(context).size.width * 0.28
+                          : MediaQuery.of(context).size.width * 0.31),
                 Container(
                   height: 35,
                   decoration: BoxDecoration(
@@ -608,7 +606,7 @@ class _FillTheViewState extends State<FillTheView> {
               return GestureDetector(
                 onTap: () async {
                   Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (context) => FillTheView(city: cities[index], startIndex: currentIndex,))
+                    MaterialPageRoute(builder: (context) => FinalApp(city: cities[index], startIndex: currentIndex,))
                   );
                   // if (!context.mounted) return;
                   // Navigator.pop(context);

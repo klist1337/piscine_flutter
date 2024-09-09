@@ -32,53 +32,55 @@ class _WhereAreWeState extends State<WhereAreWe> {
         preferredSize: Size(MediaQuery.of(context).size.width, 60),
         child: AppBar(
           backgroundColor: const Color(0xFF5B5D72),
-          flexibleSpace: Column(
-            children: [
-              SizedBox(height: isPortrait ?
-              MediaQuery.of(context).size.height * 0.058 
-              : MediaQuery.of(context).size.height * 0.09),
-              Row(
+          flexibleSpace: SingleChildScrollView(
+            child: Column(
               children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: SizedBox(
-                    width: isPortrait ? 200 : 500,
-                    child: TextFormField(
-                    onChanged: (value) {
-                      setState(() {
-                        isDenied = false;
-                        location = value;
-                      });
-                    },
-                    controller: controller ,
-                    decoration:  InputDecoration(
-                      hintText: "Search your location",
-                      hintStyle: TextStyle(
-                        fontStyle:FontStyle.italic,
-                        color: Colors.grey.shade500
+                SizedBox(height: isPortrait ?
+                MediaQuery.of(context).size.height * 0.058 
+                : MediaQuery.of(context).size.height * 0.09),
+                Row(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: SizedBox(
+                      width: isPortrait ? 200 : 500,
+                      child: TextFormField(
+                      onChanged: (value) {
+                        setState(() {
+                          isDenied = false;
+                          location = value;
+                        });
+                      },
+                      controller: controller ,
+                      decoration:  InputDecoration(
+                        hintText: "Search your location",
+                        hintStyle: TextStyle(
+                          fontStyle:FontStyle.italic,
+                          color: Colors.grey.shade500
+                        ),
+                        prefixIcon:  const Icon(Icons.search, color: Colors.white,),
                       ),
-                      prefixIcon:  const Icon(Icons.search, color: Colors.white,),
+                                ),
                     ),
-                              ),
                   ),
+                SizedBox(width: MediaQuery.of(context).size.width * 0.3),
+                Container(
+                  height: 35,
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      width: 1,
+                      color: Colors.white
+                    ))
+                  ),
+               const SizedBox(width: 8.0,),
+                IconButton(onPressed: () async {
+                  await _determinePosition();
+                }, 
+                  icon: const Icon(CupertinoIcons.location_fill, color: Colors.white,))
+                ]  
                 ),
-              SizedBox(width: MediaQuery.of(context).size.width * 0.3),
-              Container(
-                height: 35,
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    width: 1,
-                    color: Colors.white
-                  ))
-                ),
-             const SizedBox(width: 8.0,),
-              IconButton(onPressed: () async {
-                await _determinePosition();
-              }, 
-                icon: const Icon(CupertinoIcons.location_fill, color: Colors.white,))
-              ]  
-              ),
-            ],
+              ],
+            ),
           ),),
       ),
       body: pages[currentIndex] ,
