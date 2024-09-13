@@ -17,9 +17,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        
+        fontFamily: "cereal",
       ),
-      home: const WeatherAppV2Proj(),
+      home: const WeatherFinalProj(),
     );
   }
 }

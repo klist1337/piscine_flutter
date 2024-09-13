@@ -1,4 +1,3 @@
-import 'package:geolocator/geolocator.dart';
 import 'package:piscine_mobile/Modulel02/constant.dart';
 import 'package:piscine_mobile/Modulel02/http_services.dart';
 

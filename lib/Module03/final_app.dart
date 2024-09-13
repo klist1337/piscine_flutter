@@ -1,9 +1,10 @@
+
 import 'package:flutter/cupertino.dart'; 
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:piscine_mobile/Modulel02/data_service.dart';
-import 'package:piscine_mobile/Modulel02/function.dart';
+import 'package:piscine_mobile/Module03/data_service.dart';
+import 'package:piscine_mobile/Module03/function.dart';
 // ignore: must_be_immutable
 class FinalApp extends StatefulWidget {
   FinalApp({super.key, this.city, this.startIndex});
@@ -50,10 +51,12 @@ class _FinalAppState extends State<FinalApp> {
       currentIndex = widget.startIndex!; 
     }
     return Scaffold(
+      extendBody: true,
+      extendBodyBehindAppBar: true,
       appBar: PreferredSize(
-        preferredSize: Size(MediaQuery.of(context).size.height, 60),
+        preferredSize: Size(MediaQuery.of(context).size.height, 80),
         child: AppBar(
-          backgroundColor: const Color(0xFF5B5D72),
+          backgroundColor: Colors.transparent,
           flexibleSpace: SingleChildScrollView(
             child: Column(
               children: [
@@ -65,8 +68,11 @@ class _FinalAppState extends State<FinalApp> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 8.0),
                     child: SizedBox(
-                      width: isPortrait ? 220 : 500,
+                      width: isPortrait ? 240 : 500,
                       child: TextFormField(
+                      style: const TextStyle(
+                        color: Colors.white
+                      ),
                       onChanged: (value) {
                         setState(() {
                           isDenied = false;
@@ -85,15 +91,16 @@ class _FinalAppState extends State<FinalApp> {
                         labelText: "Search your location",
                         labelStyle: TextStyle(
                           fontStyle:FontStyle.italic,
+                          fontWeight: FontWeight.bold,
                           fontSize: isPortrait ? 15 : 18,
-                          color: Colors.grey.shade500
+                          color: Colors.white
                         ),
                         prefixIcon:  const Icon(Icons.search, color: Colors.white,),
                       ),
                                 ),
                     ),
                   ),
-                SizedBox(width: isPortrait ? MediaQuery.of(context).size.width * 0.28
+                SizedBox(width: isPortrait ? MediaQuery.of(context).size.width * 0.22
                           : MediaQuery.of(context).size.width * 0.31),
                 Container(
                   height: 35,
@@ -115,10 +122,33 @@ class _FinalAppState extends State<FinalApp> {
             ),
           ),),
       ),
-      body: searchCity.isEmpty ? 
-        pages[currentIndex] 
-        : searcherList() ,
+      body: Stack(
+        children: [
+          Container(
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/images/gradient2.jpg'),
+                fit: BoxFit.fill,
+                opacity: 0.85
+              )
+            ),
+            height: double.infinity ,
+          ),
+          searchCity.isEmpty ? 
+            pages[currentIndex] 
+            : searcherList(),
+        ],
+      ) ,
       bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: Colors.transparent,
+        selectedItemColor: const Color.fromARGB(255, 248, 245, 66),
+        unselectedItemColor: Colors.white,
+        unselectedLabelStyle: const TextStyle(
+          fontFamily: "cereal"
+        ),
+        selectedLabelStyle: const TextStyle(
+          fontFamily: "cereal"
+        ),
         currentIndex: currentIndex,
         items: [
           BottomNavigationBarItem(
@@ -210,47 +240,76 @@ class _FinalAppState extends State<FinalApp> {
             }
             else {
               final currentWeather = snapshot.data;
+              int weatherCode = currentWeather['current']['weather_code'];
               String? weatherCondition = getWeatherCondition(currentWeather['current']['weather_code']);
               double temperature = currentWeather['current']['apparent_temperature']; 
               double windSpeed = currentWeather['current']['wind_speed_10m'];
-              return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 20,),
-                  Text(locations[0], 
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold
-                  ),),
-                  Text(locations[1], 
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold
-                  ),),
-                  Text(locations[2], 
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold
-                  ),),
-                  Text("$temperature °C",
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold
-                  ),),
-                  Text(weatherCondition!,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold
-                  ),),
-                  Text("$windSpeed km/h",
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold
-                  ),),
-                ],
-              ),
-            );
+              return SafeArea(
+                child: SingleChildScrollView(
+                  child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 80,),
+                      Text(locations[0], 
+                      style:  const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color:Colors.white
+                      ),),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text("${locations[1]},", 
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.yellow
+                          ),),
+                          Text(locations[2], 
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white
+                          ),),
+                        ],
+                      ),
+                  
+                      const SizedBox(height: 20,),
+                      Text("$temperature °C",
+                      style: const TextStyle(
+                        fontSize: 40,
+                        fontWeight: FontWeight.bold,
+                        color: Color.fromARGB(255, 234, 227, 171)
+                      ),),
+                      const SizedBox(height: 20,),
+                      Text(weatherCondition!,
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Color.fromARGB(255, 92, 170, 137)
+                      ),),
+                      getImageByWeather(weatherCode),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Image.asset(
+                            'assets/images/wind.png',
+                            width: 40,
+                            height: 40,),
+                          Text("$windSpeed km/h",
+                          style: const TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.blueGrey
+                          ),),
+                        ],
+                      ),
+                    ],
+                  ),
+                              ),
+                ),
+              );
             }
             
           }
@@ -331,41 +390,43 @@ class _FinalAppState extends State<FinalApp> {
               final todayWeatherTemp = snapshot.data['hourly']['temperature_2m'];
               final todayWeatherCode = snapshot.data['hourly']['weather_code'];
               final todayWindSpeed = snapshot.data['hourly']['wind_speed_10m'];
-              return Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 20,),
-                  Text(locations[0], 
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold
-                  ),),
-                  Text(locations[1], 
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold
-                  ),),
-                  Text(locations[2], 
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold
-                  ),),
-                  Expanded(
-                    child: ListView.builder(
-                    itemCount: todayWeatherTime.length,
-                    itemBuilder:(context, index) {
-                      return Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          Text(todayWeatherTime[index].split('T')[1]),
-                          //const SizedBox(width: 10,),
-                          Text("${todayWeatherTemp[index]} °C"),
-                          //const SizedBox(width: 20,),
-                          Text(getWeatherCondition(todayWeatherCode[index])!.split(':')[0]),
-                          Text("${todayWindSpeed[index]} km/h")
-                      ]);
-                    }))
-                ], 
+              return SafeArea(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 20,),
+                    Text(locations[0], 
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold
+                    ),),
+                    Text(locations[1], 
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold
+                    ),),
+                    Text(locations[2], 
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold
+                    ),),
+                    Expanded(
+                      child: ListView.builder(
+                      itemCount: todayWeatherTime.length,
+                      itemBuilder:(context, index) {
+                        return Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            Text(todayWeatherTime[index].split('T')[1]),
+                            //const SizedBox(width: 10,),
+                            Text("${todayWeatherTemp[index]} °C"),
+                            //const SizedBox(width: 20,),
+                            Text(getWeatherCondition(todayWeatherCode[index])!.split(':')[0]),
+                            Text("${todayWindSpeed[index]} km/h")
+                        ]);
+                      }))
+                  ], 
+                ),
               );
             }
             
@@ -448,41 +509,43 @@ class _FinalAppState extends State<FinalApp> {
               final todayTempMax = snapshot.data['daily']['temperature_2m_min'];
               final todayTempMin = snapshot.data['daily']['temperature_2m_max'];
               final todayWeatherCode = snapshot.data['daily']['weather_code'];
-              return Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 20,),
-                  Text(locations[0], 
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold
-                  ),),
-                  Text(locations[1], 
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold
-                  ),),
-                  Text(locations[2], 
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold
-                  ),),
-                  Expanded(
-                    child: ListView.builder(
-                    itemCount: todayWeatherTime.length,
-                    itemBuilder:(context, index) {
-                      return Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          Text(todayWeatherTime[index]),
-                          //const SizedBox(width: 10,),
-                          Text("${todayTempMin[index]} °C"),
-                          //const SizedBox(width: 20,),
-                          Text("${todayTempMax[index]} °C"),
-                          Text(getWeatherCondition(todayWeatherCode[index])!.split(':')[0]),
-                      ]);
-                    }))
-                ], 
+              return SafeArea(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 20,),
+                    Text(locations[0], 
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold
+                    ),),
+                    Text(locations[1], 
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold
+                    ),),
+                    Text(locations[2], 
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold
+                    ),),
+                    Expanded(
+                      child: ListView.builder(
+                      itemCount: todayWeatherTime.length,
+                      itemBuilder:(context, index) {
+                        return Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            Text(todayWeatherTime[index]),
+                            //const SizedBox(width: 10,),
+                            Text("${todayTempMin[index]} °C"),
+                            //const SizedBox(width: 20,),
+                            Text("${todayTempMax[index]} °C"),
+                            Text(getWeatherCondition(todayWeatherCode[index])!.split(':')[0]),
+                        ]);
+                      }))
+                  ], 
+                ),
               );
             }
             
@@ -600,7 +663,7 @@ class _FinalAppState extends State<FinalApp> {
           ));
         }
         return ListView.separated(
-          itemCount: snapshot.data.length,
+          itemCount: snapshot.data.length >= 5 ? 5 : snapshot.data.length,
           itemBuilder: (context, index) {
             List<dynamic> cities = snapshot.data;
               return GestureDetector(
@@ -608,34 +671,38 @@ class _FinalAppState extends State<FinalApp> {
                   Navigator.of(context).pushReplacement(
                     MaterialPageRoute(builder: (context) => FinalApp(city: cities[index], startIndex: currentIndex,))
                   );
-                  // if (!context.mounted) return;
-                  // Navigator.pop(context);
                 },
                 child: Container(
                   height: 80,
                   width: MediaQuery.of(context).size.width,
                   decoration: const BoxDecoration(
-                    color: Color.fromARGB(137, 255, 255, 255)
+                    color: Colors.black12
                   ),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 8),
                     child: Row(
                       children: [
+                        const Icon(
+                        Icons.location_city, 
+                        color: Colors.white,
+                        size: 21,),
+                        const SizedBox(width: 8,),
                         Text(cities[index]['name'], style: const TextStyle(
                           fontWeight: FontWeight.bold,
-                          fontSize: 16
+                          fontSize: 16,
+                          color: Colors.white
                         ),),
                         const SizedBox(width: 8,),
                         Text("${cities[index]['admin1']}, ", 
-                          style: TextStyle(
-                            color: Colors.grey.shade800,
-                            fontSize: 16
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 13
                           ) ,),
                        cities[index]['country'] != null ?
                         Text(cities[index]['country'], 
-                          style: TextStyle(
-                            color: Colors.grey.shade800,
-                            fontSize: 16
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 13
                           ) ,) : const SizedBox.shrink()
                       ],
                     ),
@@ -645,6 +712,7 @@ class _FinalAppState extends State<FinalApp> {
             },
           separatorBuilder: (context, index) => const Divider(
             height: 2,
+            color: Colors.black,
           ),
         );
       }

@@ -63,9 +63,10 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  # assets:
-  #   - images/a_dot_burr.jpeg
-  #   - images/a_dot_ham.jpeg
+  assets:
+    - assets/
+    - assets/images/
+    - assets/fonts/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
@@ -89,6 +90,14 @@ flutter:
   #       - asset: fonts/TrajanPro.ttf
   #       - asset: fonts/TrajanPro_Bold.ttf
   #         weight: 700
-  #
+  fonts:
+    - family: cereal
+      fonts:
+        - asset: assets/fonts/AirbnbCereal_W_Lt.otf
+        - asset: assets/fonts/AirbnbCereal_W_Blk.otf
+        - asset: assets/fonts/AirbnbCereal_W_Bd.otf
+        - asset: assets/fonts/AirbnbCereal_W_Bk.otf
+        - asset: assets/fonts/AirbnbCereal_W_XBd.otf
+        - asset: assets/fonts/AirbnbCereal_W_Md.otf
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
