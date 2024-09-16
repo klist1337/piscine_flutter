@@ -297,7 +297,7 @@ class _FinalAppState extends State<FinalApp> {
                         fontWeight: FontWeight.bold,
                         color: Color.fromARGB(255, 92, 170, 137)
                       ),),
-                      getImageByWeather(weatherCode),
+                      getImageByWeather(weatherCode, 200),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -427,26 +427,60 @@ class _FinalAppState extends State<FinalApp> {
                       ],
                     ),
                     const SizedBox(height: 10,),
+                    const Text("Today Temperature", 
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: Colors.white
+                    ),),
+                    const SizedBox(height: 10,),
                     WeatherChart(
                       maxTemp: getMaxTemp(todayWeatherTemp), 
                       minTemp: getMinTemp(todayWeatherTemp),
                       dayTemp: todayWeatherTemp,),
+                    
+                    const SizedBox(height: 10,),
                     Expanded(
-                      child: ListView.builder(
+                      child: ListView.separated(
+                      scrollDirection: Axis.horizontal ,
                       itemCount: todayWeatherTime.length,
                       itemBuilder:(context, index) {
-                        return Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        return Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
-                            Text(todayWeatherTime[index].split('T')[1]),
+                            Text(todayWeatherTime[index].split('T')[1], 
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                              color: Colors.white
+                            ),),
                             //const SizedBox(width: 10,),
-                            Text("${todayWeatherTemp[index]} °C"),
+                            Text("${todayWeatherTemp[index]} °C", 
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Color.fromARGB(255, 234, 227, 171)
+                              ),),
+                            getImageByWeather(todayWeatherCode[index], 80),
                             //const SizedBox(width: 20,),
-                            Text(getWeatherCondition(todayWeatherCode[index])!.split(':')[0]),
-                            Text("${todayWindSpeed[index]} km/h")
+                            Text(getWeatherCondition(todayWeatherCode[index])!.split(':')[0], 
+                              style: const TextStyle(
+                                color:  Color.fromARGB(255, 219, 227, 53),
+                                fontWeight: FontWeight.bold
+                              ),),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                Image.asset("assets/images/wind.png", width: 30,),
+                                Text("${todayWindSpeed[index]} km/h", 
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white
+                                  ) ,),
+                              ],
+                            )
                         ]);
-                      })),
-                      Text("${getMinTemp(todayWeatherTemp)}"),
+                      },
+                      separatorBuilder: (context, index) => const SizedBox(width: 10,),)),
                   ], 
                 ),
               );

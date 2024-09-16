@@ -12,33 +12,33 @@ String? getWeatherCondition(int code) {
   return null;
 }
 
-Widget getImageByWeather(int code) {
+Widget getImageByWeather(int code, double size) {
   if (code == 0) {
-    return Image.asset('assets/images/sunny.png', width: 200, height: 200);
+    return Image.asset('assets/images/sunny.png', width: size, height: size);
   }
   else if (code> 0 && code <= 3) {
-      return Image.asset('assets/images/cloudy.png', width: 200, height: 200);
+      return Image.asset('assets/images/cloudy.png', width: size, height: size);
   }
   else if (code >= 45 && code <= 48) {
-      return Image.asset('assets/images/small_rain.png', width: 200, height: 200);
+      return Image.asset('assets/images/small_rain.png', width: size, height: size);
   }
   else if (code>= 51 && code <= 55) {
-      return Image.asset('assets/images/small_rain.png', width: 200, height: 200);
+      return Image.asset('assets/images/small_rain.png', width: size, height: size);
   }
   else if (code>= 61 && code <= 75) {
-      return Image.asset('assets/images/rain.png', width: 200, height: 200);
+      return Image.asset('assets/images/rain.png', width: size, height: size);
   }
   else if (code>= 61 && code <= 75) {
-      return Image.asset('assets/images/rain.png', width: 200, height: 200);
+      return Image.asset('assets/images/rain.png', width: size, height: size);
   }
   else if (code == 77 || (code >= 85 && code <= 86)) {
-      return Image.asset('assets/images/snowfall.png', width: 200, height: 200);
+      return Image.asset('assets/images/snowfall.png', width: size, height: size);
   }
   else if (code >= 80 && code <= 82) {
-      return Image.asset('assets/images/rain.png', width: 200, height: 200);
+      return Image.asset('assets/images/rain.png', width: size, height: size);
   }
   else {
-    return Image.asset('assets/images/thunder.png', width: 200, height: 200);
+    return Image.asset('assets/images/thunder.png', width: size, height: size);
   }
 }
 
