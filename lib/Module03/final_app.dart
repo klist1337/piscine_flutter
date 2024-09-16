@@ -5,6 +5,7 @@ import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:piscine_mobile/Module03/data_service.dart';
 import 'package:piscine_mobile/Module03/function.dart';
+import 'package:piscine_mobile/Module03/weather_chart.dart';
 // ignore: must_be_immutable
 class FinalApp extends StatefulWidget {
   FinalApp({super.key, this.city, this.startIndex});
@@ -276,12 +277,19 @@ class _FinalAppState extends State<FinalApp> {
                       ),
                   
                       const SizedBox(height: 20,),
-                      Text("$temperature °C",
-                      style: const TextStyle(
-                        fontSize: 40,
-                        fontWeight: FontWeight.bold,
-                        color: Color.fromARGB(255, 234, 227, 171)
-                      ),),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          temperature > 20.0 ? Image.asset('assets/images/hottemp.png', width: 60, height: 60,) 
+                            : Image.asset('assets/images/coldtemp.png', width: 60, height: 60,),
+                          Text("$temperature °C",
+                          style: const TextStyle(
+                            fontSize: 40,
+                            fontWeight: FontWeight.bold,
+                            color: Color.fromARGB(255, 234, 227, 171)
+                          ),),
+                        ],
+                      ),
                       const SizedBox(height: 20,),
                       Text(weatherCondition!,
                       style: const TextStyle(
@@ -397,19 +405,32 @@ class _FinalAppState extends State<FinalApp> {
                     const SizedBox(height: 20,),
                     Text(locations[0], 
                     style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white
                     ),),
-                    Text(locations[1], 
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold
-                    ),),
-                    Text(locations[2], 
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold
-                    ),),
+                    Row(
+                      mainAxisAlignment:MainAxisAlignment.center,
+                      children: [
+                        Text("${locations[1]},", 
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.yellow
+                        ),),
+                        Text(locations[2], 
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white
+                        ),),
+                      ],
+                    ),
+                    const SizedBox(height: 10,),
+                    WeatherChart(
+                      maxTemp: getMaxTemp(todayWeatherTemp), 
+                      minTemp: getMinTemp(todayWeatherTemp),
+                      dayTemp: todayWeatherTemp,),
                     Expanded(
                       child: ListView.builder(
                       itemCount: todayWeatherTime.length,
@@ -424,7 +445,8 @@ class _FinalAppState extends State<FinalApp> {
                             Text(getWeatherCondition(todayWeatherCode[index])!.split(':')[0]),
                             Text("${todayWindSpeed[index]} km/h")
                         ]);
-                      }))
+                      })),
+                      Text("${getMinTemp(todayWeatherTemp)}"),
                   ], 
                 ),
               );

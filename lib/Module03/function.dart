@@ -41,3 +41,22 @@ Widget getImageByWeather(int code) {
     return Image.asset('assets/images/thunder.png', width: 200, height: 200);
   }
 }
+
+double getMaxTemp(List<dynamic> temperature) {
+  double max = temperature[0];
+  for (var temp in temperature) {
+    if (max < temp) {
+      max = temp;
+    }
+  }
+  return max;
+}
+double getMinTemp(List<dynamic> temperature) {
+  double min = temperature[0];
+  for (var temp in temperature) {
+    if (min > temp) {
+      min = temp;
+    }
+  }
+  return min;
+}
