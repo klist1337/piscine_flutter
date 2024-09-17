@@ -60,3 +60,7 @@ double getMinTemp(List<dynamic> temperature) {
   }
   return min;
 }
+
+String formatDate(String date) {
+    return "${date.split('-')[2]}/${date.split('-')[1]}";
+  }

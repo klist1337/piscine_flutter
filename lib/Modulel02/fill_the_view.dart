@@ -447,8 +447,8 @@ class _FillTheViewState extends State<FillTheView> {
             }
             else {
               final todayWeatherTime = snapshot.data['daily']['time'];
-              final todayTempMax = snapshot.data['daily']['temperature_2m_min'];
-              final todayTempMin = snapshot.data['daily']['temperature_2m_max'];
+              final todayTempMax = snapshot.data['daily']['temperature_2m_max'];
+              final todayTempMin = snapshot.data['daily']['temperature_2m_min'];
               final todayWeatherCode = snapshot.data['daily']['weather_code'];
               return Column(
                 mainAxisAlignment: MainAxisAlignment.start,

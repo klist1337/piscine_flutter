@@ -1,73 +1,70 @@
+
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:piscine_mobile/Module03/function.dart';
 
-class TodayWeatherChart extends StatelessWidget {
-  TodayWeatherChart({
+class WeeklyWeatherChart extends StatelessWidget {
+  WeeklyWeatherChart({
     super.key,
     Color? line1Color,
     Color? line2Color,
     Color? betweenColor,
-    double? maxTemp,
+    List<dynamic>? weatherDate,
+    List<dynamic>? listMaxTemp,
+    List<dynamic>? listMinTemp,
     double? minTemp,
-    List<dynamic>? dayTemp,
-  })  : line1Color = line1Color ?? Colors.green,
-        line2Color = line2Color ??  Colors.red,
+    double? maxTemp,
+
+    
+  })  : line1Color = line1Color ?? Colors.blue.shade700,
+        line2Color = line2Color ?? Colors.red,
         betweenColor =
-            betweenColor ?? Colors.red.withOpacity(0.5),
-        maxTemp = maxTemp ?? 30,
-        minTemp = minTemp ?? 0,
-        dayTemp = dayTemp ?? [];
+            betweenColor ?? const Color.fromARGB(255, 57, 47, 46).withOpacity(0.5),
+        weatherDate = weatherDate ?? [],
+        listMaxTemp = listMaxTemp ?? [],
+        listMinTemp = listMinTemp ?? [],
+        maxTemp = maxTemp ?? 0,
+        minTemp = minTemp ?? 0;
+        
 
   final Color line1Color;
   final Color line2Color;
   final Color betweenColor;
+  final List<dynamic> weatherDate;
+  final List<dynamic> listMaxTemp;
+  final List<dynamic> listMinTemp;
   final double maxTemp;
   final double minTemp;
-  final List<dynamic> dayTemp;
+  
 
   Widget bottomTitleWidgets(double value, TitleMeta meta) {
     const style = TextStyle(
-      fontSize: 10,
+      fontSize: 12,
       fontWeight: FontWeight.bold,
       color: Colors.white
     );
     String text;
     switch (value.toInt()) {
       case 0:
-        text = '02:00';
+        text = formatDate(weatherDate[0]);
         break;
       case 1:
-        text = '04:00';
+        text = formatDate(weatherDate[1]);
         break;
       case 2:
-        text = '06:00';
+        text = formatDate(weatherDate[2]);
         break;
       case 3:
-        text = '08:00';
+        text = formatDate(weatherDate[3]);
         break;
       case 4:
-        text = '10:00';
+        text = formatDate(weatherDate[4]);
         break;
       case 5:
-        text = '12:00';
+        text = formatDate(weatherDate[5]);
         break;
       case 6:
-        text = '14:00';
-        break;
-      case 7:
-        text = '16:00';
-        break;
-      case 8:
-        text = '18:00';
-        break;
-      case 9:
-        text = '20:00';
-        break;
-      case 10:
-        text = '22:00';
-        break;
-      case 11:
-        text = '23:00';
+        text = formatDate(weatherDate[6]);
         break;
       default:
         return Container();
@@ -76,20 +73,20 @@ class TodayWeatherChart extends StatelessWidget {
     return SideTitleWidget(
       axisSide: meta.axisSide,
       space: 4,
-      child: Text(text, style: style),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+        child: Text(text, style: style),
+      ),
     );
   }
 
   Widget leftTitleWidgets(double value, TitleMeta meta) {
-    const style = TextStyle(
-      fontSize: 10, 
-      color: Colors.white, 
-      fontWeight: FontWeight.bold);
-      
+    const style = TextStyle(fontSize: 12, color: Colors.white, fontWeight: FontWeight.bold);
+
     return SideTitleWidget(
       axisSide: meta.axisSide,
       child: Text(
-        ' ${(minTemp + value)} °C',
+        '${minTemp + value}',
         style: style,
       ),
     );
@@ -102,7 +99,7 @@ class TodayWeatherChart extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.only(
           left: 10,
-          right: 20,
+          right: 18,
           top: 10,
           bottom: 4,
         ),
@@ -112,18 +109,13 @@ class TodayWeatherChart extends StatelessWidget {
             lineBarsData: [
               LineChartBarData(
                 spots: [
-                  FlSpot(0, (dayTemp[2] - minTemp)),
-                  FlSpot(1, (dayTemp[4] - minTemp)),
-                  FlSpot(2, (dayTemp[6] - minTemp)),
-                  FlSpot(3, (dayTemp[8] - minTemp)),
-                  FlSpot(4, (dayTemp[10] - minTemp)),
-                  FlSpot(5, (dayTemp[12] - minTemp)),
-                  FlSpot(6, (dayTemp[14] - minTemp)),
-                  FlSpot(7, (dayTemp[16] - minTemp)),
-                  FlSpot(8, (dayTemp[18] - minTemp)),
-                  FlSpot(9, (dayTemp[20] - minTemp)),
-                  FlSpot(10, (dayTemp[22] - minTemp)),
-                  FlSpot(11, (dayTemp[23] - minTemp)),     
+                  FlSpot(0, listMaxTemp[0] - minTemp),
+                  FlSpot(1, listMaxTemp[1] - minTemp),
+                  FlSpot(2, listMaxTemp[2] - minTemp),
+                  FlSpot(3, listMaxTemp[3] - minTemp),
+                  FlSpot(4, listMaxTemp[4] - minTemp),
+                  FlSpot(5, listMaxTemp[5] - minTemp),
+                  FlSpot(6, listMaxTemp[6] - minTemp),
                 ],
                 isCurved: true,
                 barWidth: 2,
@@ -132,10 +124,32 @@ class TodayWeatherChart extends StatelessWidget {
                   show: false,
                 ),
               ),
-             
+              LineChartBarData(
+                spots: [
+                  FlSpot(0, listMinTemp[0] - minTemp),
+                  FlSpot(1, listMinTemp[1] - minTemp),
+                  FlSpot(2, listMinTemp[2] - minTemp),
+                  FlSpot(3, listMinTemp[3] - minTemp),
+                  FlSpot(4,listMinTemp[4] - minTemp),
+                  FlSpot(5,listMinTemp[5] - minTemp),
+                  FlSpot(6, listMinTemp[6] - minTemp),
+                ],
+                isCurved: true,
+                barWidth: 2,
+                color: line2Color,
+                dotData: const FlDotData(
+                  show: false,
+                ),
+              ),
             ],
-           
-            minY: 0 ,
+            betweenBarsData: [
+              BetweenBarsData(
+                fromIndex: 0,
+                toIndex: 1,
+                color: betweenColor,
+              )
+            ],
+            minY: 0,
             borderData: FlBorderData(
               show: false,
             ),
@@ -152,7 +166,7 @@ class TodayWeatherChart extends StatelessWidget {
                   showTitles: true,
                   getTitlesWidget: leftTitleWidgets,
                   interval: 1,
-                  reservedSize: 50,
+                  reservedSize: 40,
                 ),
               ),
               topTitles: const AxisTitles(
@@ -175,4 +189,5 @@ class TodayWeatherChart extends StatelessWidget {
       ),
     );
   }
+  
 }

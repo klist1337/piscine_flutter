@@ -3,9 +3,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:piscine_mobile/Module03/constant.dart';
 import 'package:piscine_mobile/Module03/data_service.dart';
 import 'package:piscine_mobile/Module03/function.dart';
 import 'package:piscine_mobile/Module03/weather_chart.dart';
+import 'package:piscine_mobile/Module03/weekly_weather_chart.dart';
 // ignore: must_be_immutable
 class FinalApp extends StatefulWidget {
   FinalApp({super.key, this.city, this.startIndex});
@@ -433,7 +435,7 @@ class _FinalAppState extends State<FinalApp> {
                         color: Colors.white
                     ),),
                     const SizedBox(height: 10,),
-                    WeatherChart(
+                    TodayWeatherChart(
                       maxTemp: getMaxTemp(todayWeatherTemp), 
                       minTemp: getMinTemp(todayWeatherTemp),
                       dayTemp: todayWeatherTemp,),
@@ -485,7 +487,6 @@ class _FinalAppState extends State<FinalApp> {
                 ),
               );
             }
-            
           }
         );
       }
@@ -561,9 +562,9 @@ class _FinalAppState extends State<FinalApp> {
             ));
             }
             else {
-              final todayWeatherTime = snapshot.data['daily']['time'];
-              final todayTempMax = snapshot.data['daily']['temperature_2m_min'];
-              final todayTempMin = snapshot.data['daily']['temperature_2m_max'];
+              final todayWeatherDate = snapshot.data['daily']['time'];
+              final todayTempMax = snapshot.data['daily']['temperature_2m_max'];
+              final todayTempMin = snapshot.data['daily']['temperature_2m_min'];
               final todayWeatherCode = snapshot.data['daily']['weather_code'];
               return SafeArea(
                 child: Column(
@@ -572,34 +573,100 @@ class _FinalAppState extends State<FinalApp> {
                     const SizedBox(height: 20,),
                     Text(locations[0], 
                     style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white
                     ),),
-                    Text(locations[1], 
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold
-                    ),),
-                    Text(locations[2], 
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold
-                    ),),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text("${locations[1]},", 
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.yellow
+                        ),),
+                        Text(locations[2], 
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white
+                        ),),
+                      ],
+                    ),
+                    const SizedBox(height: 10,),
+                    const Text("Weekly temperature",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                        fontSize: 18
+                      ),),
+                    WeeklyWeatherChart(
+                      weatherDate: todayWeatherDate, 
+                      minTemp: getMinTemp(todayTempMin),
+                      maxTemp: getMaxTemp(todayTempMax),
+                      listMaxTemp: todayTempMax,
+                      listMinTemp: todayTempMin,),
+                    const SizedBox(height: 20,),
                     Expanded(
-                      child: ListView.builder(
-                      itemCount: todayWeatherTime.length,
+                      child: ListView.separated(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: todayWeatherDate.length,
                       itemBuilder:(context, index) {
-                        return Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        return Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
-                            Text(todayWeatherTime[index]),
+                            Text(
+                               formatDate(todayWeatherDate[index]), 
+                                style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              
+                              ),),
                             //const SizedBox(width: 10,),
-                            Text("${todayTempMin[index]} °C"),
+                            Row(
+                              children: [
+                                Text("${todayTempMax[index]} °C ",
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.red
+                                  ),),
+                                const Text("max",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 8,
+                                    color: Colors.red
+                                  ),),
+                              ],
+                            ),
+                              
                             //const SizedBox(width: 20,),
-                            Text("${todayTempMax[index]} °C"),
-                            Text(getWeatherCondition(todayWeatherCode[index])!.split(':')[0]),
+                            Row(
+                              children: [
+                                Text("${todayTempMin[index]} °C ",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.blue.shade300
+                                  ),),
+                                Text("min",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 8,
+                                    color: Colors.blue.shade300
+                                  ),),
+                              ],
+                            ),
+                            getImageByWeather(todayWeatherCode[index], 80),
+                            Text(getWeatherCondition(todayWeatherCode[index])!.split(':')[0], 
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+
+                            ),),
                         ]);
-                      }))
+                      },
+                      separatorBuilder: (context, index) => const SizedBox(width: 10,),
+                      ))
                   ], 
                 ),
               );
