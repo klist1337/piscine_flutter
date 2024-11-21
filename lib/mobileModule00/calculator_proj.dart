@@ -40,12 +40,15 @@ class _CalculatorProjState extends State<CalculatorProj> {
                   fontSize: 24,
                   fontWeight:  FontWeight.bold,
                   color:   Color(0xFF607d8b)
-                ),) : 
+                ),
+                ) : 
                  const Text("0", style:  TextStyle(
                   fontSize: 24,
                   fontWeight:  FontWeight.bold,
                   color:   Color(0xFF607d8b)
-                ),)
+                ),
+
+                )
               ),
             ],
           ),
@@ -79,7 +82,7 @@ class _CalculatorProjState extends State<CalculatorProj> {
               itemBuilder: (context, index) {
               return GestureDetector(
                 onTap: () {
-                  if (!otherButtons.contains(buttons[index]) && buttons[index] != "=") {
+                  if (!otherButtons.contains(buttons[index]) && buttons[index] != "=" && userInput.length < 26) {
                     setState(() {
                     isTaped = true;
                     userInput += buttons[index];
@@ -112,7 +115,6 @@ class _CalculatorProjState extends State<CalculatorProj> {
                       equalPressed();
                     }
                   }
-                  
                 },
                 child: Container(
                 decoration: const BoxDecoration(
@@ -148,7 +150,6 @@ class _CalculatorProjState extends State<CalculatorProj> {
                   ),
                 )),
               );
-              
             }),
           ),
         ],
@@ -158,6 +159,7 @@ class _CalculatorProjState extends State<CalculatorProj> {
   void equalPressed() {
     isEqualPressed = true;
     String finalUserInput = userInput.replaceAll(RegExp(r'x'), '*');
+    try {
     Parser p = Parser();
     Expression exp = p.parse(finalUserInput);
     ContextModel cm = ContextModel();
@@ -165,5 +167,9 @@ class _CalculatorProjState extends State<CalculatorProj> {
     setState(() {
       answer = eval.toString();
     });
+    }
+    catch(e) {
+      return ;
+    }
   }
 }
